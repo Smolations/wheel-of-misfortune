@@ -16,27 +16,144 @@ const answers = [
   'douche bagged lunch dude',
 ];
 
+function getLineFromWords(words, maxLength) {//console.log('getLineFromWords(%o, %o)', words, maxLength)
+  const trimmedLine = words.join(' ');
+  const excess = maxLength - trimmedLine.length;
+  let leftGutter = excess / 2;
+  let rightGutter = leftGutter;
+
+  if (excess % 2 !== 0) {
+    // if gutters are unequal, let the right side have the bigger value
+    leftGutter = (excess - 1) / 2;
+    rightGutter = (excess + 1) / 2;
+  }
+  // console.log('trimmedLine: [%o]\nexcess: %o\nleftGutter: %o\nrightGutter: %o', trimmedLine, excess, leftGutter, rightGutter)
+
+  return `${' '.repeat(leftGutter)}${trimmedLine}${' '.repeat(rightGutter)}`;
+}
+
+function wordsWithGutter(wordArr, gutterWidthh) {
+  const gutter = ' '.repeat(gutterWidthh);
+  return `${gutter}${wordArr.join(' ')}${gutter}`;
+}
+
+function getWordsAsRows(answer, columns, columnGutters) {
+  const words = answer.split(' ');
+  const wordsAsRows = [];
+
+  let currentRowWords = [];
+  let currentWord;
+
+  while (words.length) {
+    currentWord = words.shift();
+    currentRowWords.push(currentWord);
+
+    if (wordsWithGutter(currentRowWords, columnGutters).length > columns) {
+      // new word won't fit in current row
+      words.unshift(currentRowWords.pop());
+      wordsAsRows.push(currentRowWords);
+      currentRowWords = [];
+    } else if (!words.length) {
+      // this is the last word for processing
+      wordsAsRows.push(currentRowWords);
+    }
+  }
+
+  return wordsAsRows;
+}
+
+function getRowDataFromLine(rowLine) {
+  const chars = [...rowLine];
+
+  return chars.map((char) => {
+    return {
+      char,
+      empty: char === ' ',
+      visible: false,
+    };
+  });
+}
+
 export default class Game extends React.Component {
   state = {
     answer: '',
+    guesses: [],
+    rowData: [],
     score: 0,
+    prize: null,
+    isSpinning: false,
+    canGuess: false,
   }
 
   constructor(props) {
     super(props);
 
     const randomAnswerIndex = Math.floor(Math.random() * Math.floor(answers.length));
+    const answer = answers[randomAnswerIndex];
 
-    this.state.answer = answers[randomAnswerIndex];
+    const columns = 16;
+    const boardGutter = 1;
+    const wordsAsRows = getWordsAsRows(answer, columns, boardGutter);
+    const rowData = wordsAsRows.map(rowWords => getLineFromWords(rowWords, columns)).map(getRowDataFromLine);
+
+    this.state.answer = answer;
+    this.state.rowData = rowData;
   }
 
-  handleGuess = (guess) => {}
+  handleGuess = (guess) => {
+    const { prize, rowData, score } = this.state;
+    let matchCount = 0;
+    let newScore = score;
 
-  handleWheelSelect = (selection) => {}
+    const newRowData = rowData.map((row) => {
+      row.forEach((cell) => {
+        if (guess === cell.char) {
+          matchCount++;
+          cell.visible = true;
+        }
+      });
+
+      return row;
+    });
+
+    if (matchCount) {
+      newScore += (prize === 0) ? (-score) : matchCount * prize;
+    }
+
+    this.setState({ canGuess: false, rowData: newRowData, score: newScore });
+  }
+
+  handleSpinEnd = (prize) => {
+    const canGuess = prize !== 0;
+    this.setState({ canGuess, isSpinning: false, prize });
+  }
+
+  // this might now be deprecated; replaced with canGuess
+  handleSpinStart = () => {
+    this.setState({ isSpinning: true });
+  }
+
+  isSolved = () => {
+    const { rowData } = this.state;
+    let anyUnguessed = false;
+
+    rowData.forEach((row) => {
+      row.forEach((cell) => {
+        if (!cell.empty && !cell.visible) {
+          anyUnguessed = true;
+        }
+      });
+    });
+
+    return !anyUnguessed;
+  }
 
 
   render() {
     const { firstName, lastName } = this.props.player;
+    const { canGuess, isSpinning, prize, rowData, score } = this.state;
+
+    const isSolved = this.isSolved();
 
     return (
       <React.Fragment>
@@ -49,15 +166,15 @@ export default class Game extends React.Component {
             </Card.Content>
             <Card.Content>
               <h5>Score:</h5>
-              <p>${this.state.score}</p>
+              <p>${score}</p>
             </Card.Content>
           </Card>
         </Sidebar>
 
         <Container>
-          <Board answer={this.state.answer} />
-          <Wheel onSelect={this.handleWheelSelect} />
-          <Guess onGuess={this.handleGuess} />
+          <Board rowData={rowData} />
+          <Wheel onSpinStart={this.handleSpinStart} onSpinEnd={this.handleSpinEnd} />
+          <Guess disabled={!canGuess} onGuess={this.handleGuess} />
         </Container>
       </React.Fragment>
     );

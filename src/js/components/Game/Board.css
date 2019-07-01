@@ -1,13 +1,26 @@
 .Board {
   margin-top: 30px;
+  padding: 0 15px;
   border: 2px solid black;
 }
 
 .Board .Board-cell {
-  border: 1px dotted green;
+  border: 1px solid black;
   text-transform: uppercase;
 }
 
-.Board .cell.empty {}
+.Board .Board-cell h1 {
+  position: relative;
+  top: -1000px;
+  margin: 20px 0;
+}
 
-.Board .cell.letter {}
+.Board .Board-cell.empty {
+  background-color: green;
+}
+
+.Board .Board-cell.visible h1 {
+  top: 0px;
+}
+
+.Board .Board-cell.letter {}
