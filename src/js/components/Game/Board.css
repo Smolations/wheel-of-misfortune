@@ -1,0 +1,13 @@
+.Board {
+  margin-top: 30px;
+  border: 2px solid black;
+}
+
+.Board .Board-cell {
+  border: 1px dotted green;
+  text-transform: uppercase;
+}
+
+.Board .cell.empty {}
+
+.Board .cell.letter {}

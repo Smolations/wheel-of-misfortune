@@ -1,0 +1,20 @@
+.App {}
+
+.App-logo {
+  margin-right: 1.5em;
+  animation: App-logo-spin infinite 20s linear;
+  pointer-events: none;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
