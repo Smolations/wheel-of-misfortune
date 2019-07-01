@@ -1,10 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-import App from './js/components/App';
-
-import './styles/index.css';
+import App from './components/App';
 
 
 function AppRouter() {

@@ -5,7 +5,9 @@ import {
   Button,
   Card,
   Container,
+  Form,
   Grid,
+  Input,
 } from 'semantic-ui-react';
 
 import './Guess.css';
@@ -14,6 +16,7 @@ import './Guess.css';
 export default class Guess extends React.Component {
   state = {
     guesses: [],
+    puzzleSolution: null,
   };
 
 
@@ -31,6 +34,15 @@ export default class Guess extends React.Component {
   handleGuess = (guess) => {
     this.setState({ guesses: this.state.guesses.concat([guess])});
     this.props.onGuess(guess);
+  }
+
+  handleSolutionChange = (evt) => {
+    this.setState({ puzzleSolution: evt.target.value });
+  }
+
+  handleSolve = (evt) => {
+    this.props.onSolve(this.state.puzzleSolution);
+    evt.preventDefault();
   }
 
   renderRow = (row) => {
@@ -59,7 +71,7 @@ export default class Guess extends React.Component {
   }
 
   render() {
-    // const columns = this.letterRows[0].length;
+    // 26 letters; will distribute evenly over two rows
     const columns = 13;
 
     return (
@@ -72,6 +84,20 @@ export default class Guess extends React.Component {
         >
           {this.letterRows.map(this.renderRow)}
         </Grid>
+
+        <Container text>
+          <Form onSubmit={this.handleSolve}>
+            <Form.Field>
+              <label>Would you like to solve the puzzle?</label>
+              <Input
+                name="puzzleSolution"
+                placeholder="Take a guess..."
+                onChange={this.handleSolutionChange}
+                action={<Button positive type="submit">Solve</Button>}
+              />
+            </Form.Field>
+          </Form>
+        </Container>
       </div>
     );
   }
@@ -81,8 +107,10 @@ export default class Guess extends React.Component {
 Guess.propTypes = {
   disabled: PropTypes.bool,
   onGuess: PropTypes.func,
+  onSolve: PropTypes.func,
 };
 
 Guess.defaultProps = {
   onGuess: () => {},
+  onSolve: () => {},
 };

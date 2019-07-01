@@ -8,6 +8,7 @@ import {
 } from 'semantic-ui-react';
 
 import Board from './Board';
+import GameSummary from './GameSummary';
 import Guess from './Guess';
 import Wheel from './Wheel';
 
@@ -81,6 +82,7 @@ export default class Game extends React.Component {
     rowData: [],
     score: 0,
     prize: null,
+    isSolved: false,
     isSpinning: false,
     canGuess: false,
   }
@@ -117,15 +119,33 @@ export default class Game extends React.Component {
     });
 
     if (matchCount) {
-      newScore += (prize === 0) ? (-score) : matchCount * prize;
+      newScore += matchCount * prize;
     }
 
-    this.setState({ canGuess: false, rowData: newRowData, score: newScore });
+    this.setState({
+      canGuess: false,
+      isSolved: this.isSolved(),
+      rowData: newRowData,
+      score: newScore,
+    });
+  }
+
+  handleSolve = (guess) => {
+    console.log('[%o] ?== [%o]', this.answer, guess.trim().toLowerCase())
+    if (this.state.answer === guess.trim().toLowerCase()) {
+      this.setState({ isSolved: true });
+    } // else tell the user how wrong they are!
   }
 
   handleSpinEnd = (prize) => {
     const canGuess = prize !== 0;
-    this.setState({ canGuess, isSpinning: false, prize });
+    let newScore = this.state.score;
+
+    if (!canGuess) {
+      newScore = 0;
+    }
+
+    this.setState({ canGuess, isSpinning: false, prize, score: newScore });
   }
 
   // this might now be deprecated; replaced with canGuess
@@ -151,33 +171,35 @@ export default class Game extends React.Component {
 
   render() {
     const { firstName, lastName } = this.props.player;
-    const { canGuess, isSpinning, prize, rowData, score } = this.state;
+    const { canGuess, isSolved, isSpinning, prize, rowData, score } = this.state;
 
-    const isSolved = this.isSolved();
+    return isSolved
+      ? (
+          <GameSummary player={this.props.player} score={score} />
+        )
+      : (
+          <React.Fragment>
+            <Sidebar as={Container} direction="right" visible={true}>
+              <Card>
+                <Card.Content header="Scoreboard" />
+                <Card.Content>
+                  <h5>Player Name:</h5>
+                  <p>{`${firstName} ${lastName}`}</p>
+                </Card.Content>
+                <Card.Content>
+                  <h5>Score:</h5>
+                  <p>${score}</p>
+                </Card.Content>
+              </Card>
+            </Sidebar>
 
-    return (
-      <React.Fragment>
-        <Sidebar as={Container} direction="right" visible={true}>
-          <Card>
-            <Card.Content header="Scoreboard" />
-            <Card.Content>
-              <h5>Player Name:</h5>
-              <p>{`${firstName} ${lastName}`}</p>
-            </Card.Content>
-            <Card.Content>
-              <h5>Score:</h5>
-              <p>${score}</p>
-            </Card.Content>
-          </Card>
-        </Sidebar>
-
-        <Container>
-          <Board rowData={rowData} />
-          <Wheel onSpinStart={this.handleSpinStart} onSpinEnd={this.handleSpinEnd} />
-          <Guess disabled={!canGuess} onGuess={this.handleGuess} />
-        </Container>
-      </React.Fragment>
-    );
+            <Container>
+              <Board rowData={rowData} />
+              <Wheel onSpinStart={this.handleSpinStart} onSpinEnd={this.handleSpinEnd} />
+              <Guess disabled={!canGuess} onGuess={this.handleGuess} onSolve={this.handleSolve} />
+            </Container>
+          </React.Fragment>
+        );
   }
 }
 
