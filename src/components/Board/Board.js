@@ -8,7 +8,9 @@ import './Board.css';
 
 export default class Board extends React.Component {
   renderRow = (row, rowIndex) => {
-    const rowKey = row.reduce((accum, cell) => `${accum}${cell.char}`, '');
+    // we'll start the accumulator as the row index so that multiple,
+    // empty rows don't have the same row key
+    const rowKey = row.reduce((accum, cell) => `${accum}${cell.char}`, `${rowIndex}`);
     let className = 'inner';
 
     const cells = row.map((cell, cellIndex) => {

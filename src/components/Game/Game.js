@@ -37,15 +37,21 @@ export default class Game extends React.Component {
   // create answers the way you'd like to see them on the board
   answers = [
     [
-      'd-bagged',
-      'lunch',
-      'lady',
+      'mythological',
+      ' hero achilles'
+    ],
+    [
+      'shaggy &  ',
+      'scooby-doo'
+    ],
+    [
+      'i\'ve got a ',
+      'good feeling',
+      'about this  ',
     ],
   ];
 
-  numColumns = 16;
-
-  numColumnsAsBoardGutter = 1;
+  ephemeralAnswers = [];
 
   prizes = [
     0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
@@ -54,14 +60,14 @@ export default class Game extends React.Component {
   vowelCost = 250;
 
 
-  constructor(props) {
-    super(props);
 
-    const answer = getAnswer(this.answers);
-
-    this.state.answer = answer;
-    this.state.rowData = getRowDataFromAnswer(answer);
+  componentDidMount() {
+    this.setUpNewGame();
   }
+
+
+  getAnswerAsString = () => this.state.answer.map(line => line.trim()).join(' ')
+
 
   handleGuess = (guess, cost = 0) => {
     const { prize, rowData, score } = this.state;
@@ -87,38 +93,41 @@ export default class Game extends React.Component {
     this.props.onScore(newScore);
 
     this.setState({
-      canGuess: false,
       isSolved: this.isSolved(),
+      lettersDisabled: true,
       rowData: newRowData,
       score: newScore,
+      solveDisabled: false,
     });
   }
 
-  handleModalClose = (evt, data) => {
-    this.setState({ showWrongSolutionModal: false });
-  }
-
-  handlePlayAgain = () => {
-
-  }
-
   handleSolve = (guess) => {
-    if (this.state.answer === guess.trim().toLowerCase()) {
+    const answer = this.getAnswerAsString();
+
+    if (answer === guess.trim().toLowerCase()) {
       this.setState({ isSolved: true });
     } else {
-      this.setState({ showWrongSolutionModal: true });
+      this.setState({ showWrongSolutionModal: true, solveDisabled: true });
     }
   }
 
   handleSpinEnd = (prize) => {
-    const canGuess = prize !== 0;
+    const isBankrupted = prize === 0;
     let newScore = this.state.score;
 
-    if (!canGuess) {
+    if (isBankrupted) {
       newScore = 0;
     }
 
-    this.setState({ canGuess, prize, score: newScore });
+    this.setState({
+      lettersDisabled: isBankrupted,
+      prize,
+      score: newScore,
+    });
+  }
+
+  handleSpinStart = () => {
+    this.setState({ lettersDisabled: true, solveDisabled: true });
   }
 
   handleConsonantGuess = (guess) => {
@@ -128,6 +137,11 @@ export default class Game extends React.Component {
   handleVowelGuess = (guess) => {
     this.handleGuess(guess, this.vowelCost);
   }
+
+  handleWrongSolutionModalClose = (evt, data) => {
+    this.setState({ showWrongSolutionModal: false });
+  }
+
 
   isSolved = () => {
     const { rowData } = this.state;
@@ -144,45 +158,69 @@ export default class Game extends React.Component {
     return !anyUnguessed;
   }
 
+  setUpNewGame = () => {
+    // we need to keep the original answers intact so they
+    // can be replenished in case they all get used up
+    if (!this.ephemeralAnswers.length) {
+      this.ephemeralAnswers = this.answers.slice(0);
+    }
+
+    const randomAnswerIndex = Math.floor(Math.random() * Math.floor(this.ephemeralAnswers.length));
+    const [answer] = this.ephemeralAnswers.splice(randomAnswerIndex, 1);
+
+    this.setState({
+      answer,
+      guesses: [],
+      isSolved: false,
+      lettersDisabled: true,
+      prize: null,
+      rowData: getRowDataFromAnswer(answer),
+      score: 0,
+      solveDisabled: true,
+    });
+  }
+
 
   render() {
     const {
-      answer,
-      canGuess,
+      lettersDisabled,
       isSolved,
       rowData,
       score,
       showWrongSolutionModal,
+      solveDisabled,
     } = this.state;
 
     return isSolved
       ? (
           <GameSummary
-            answer={answer}
+            answer={this.getAnswerAsString()}
             player={this.props.player}
             score={score}
-            onPlayAgain={this.handlePlayAgain}
+            onPlayAgain={this.setUpNewGame}
           />
         )
       : (
           <Container>
             <Board rowData={rowData} />
-            <Wheel onSpinEnd={this.handleSpinEnd} prizes={this.prizes} />
+            <Wheel onSpinEnd={this.handleSpinEnd} onSpinStart={this.handleSpinStart} prizes={this.prizes} />
             <Guess
-              disabled={!canGuess}
+              canBuyVowel={score >= this.vowelCost}
+              lettersDisabled={lettersDisabled}
+              solveDisabled={solveDisabled}
               vowelCost={this.vowelCost}
               onConsonant={this.handleConsonantGuess}
               onVowel={this.handleVowelGuess}
               onSolve={this.handleSolve}
             />
 
-            <Modal size="mini" open={showWrongSolutionModal} onClose={this.handleModalClose}>
+            <Modal size="mini" open={showWrongSolutionModal} onClose={this.handleWrongSolutionModalClose}>
               <Modal.Header>Oh Noes!</Modal.Header>
               <Modal.Content>
                 <p>You were <em>so</em> wrong...</p>
               </Modal.Content>
               <Modal.Actions>
-                <Button positive content="Dang it! Okay..." onClick={this.handleModalClose} />
+                <Button positive content="Dang it! Okay..." onClick={this.handleWrongSolutionModalClose} />
               </Modal.Actions>
             </Modal>
           </Container>
