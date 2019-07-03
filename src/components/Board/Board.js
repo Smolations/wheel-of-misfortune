@@ -7,23 +7,36 @@ import './Board.css';
 
 
 export default class Board extends React.Component {
-  renderRow = (row) => {
+  renderRow = (row, rowIndex) => {
     const rowKey = row.reduce((accum, cell) => `${accum}${cell.char}`, '');
-    const cells = row.map((cell, ndx) => {
+    let className = 'inner';
+
+    const cells = row.map((cell, cellIndex) => {
       const classes = ['Board-cell'];
 
       cell.empty && classes.push('empty');
       cell.visible && classes.push('visible');
 
       return (
-        <Grid.Column className={classes.join(' ')} key={ndx}>
+        <Grid.Column
+          className={classes.join(' ')}
+          textAlign="center"
+          verticalAlign="middle"
+          key={cellIndex}
+        >
           <h1>{cell.empty ? '.' : cell.char}</h1>
         </Grid.Column>
       );
     });
 
+    if (rowIndex === 0) {
+      className = 'outer-top';
+    } else if (rowIndex === 3) {
+      className = 'outer-bottom';
+    }
+
     return (
-      <Grid.Row key={rowKey}>
+      <Grid.Row className={className} centered columns={14} key={rowKey}>
         {cells}
       </Grid.Row>
     );
@@ -32,16 +45,11 @@ export default class Board extends React.Component {
 
   render() {
     const { rowData } = this.props;
-    const columns = rowData[0] ? rowData[0].length : 16;
 
+    // set columns to 2 to get top/bottom rows to center (paired with `Grid.Row` attrs)
     return (
       <div className="Board">
-        <Grid
-          columns={columns}
-          textAlign="center"
-          verticalAlign="middle"
-          padded={true}
-        >
+        <Grid columns={2}>
           {rowData.map(this.renderRow)}
         </Grid>
       </div>

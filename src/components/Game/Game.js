@@ -7,10 +7,10 @@ import {
   Modal,
 } from 'semantic-ui-react';
 
-import Board from './Board';
-import GameSummary from './GameSummary';
-import Guess from './Guess';
-import Wheel from './Wheel';
+import Board from '../Board';
+import GameSummary from '../GameSummary';
+import Guess from '../Guess';
+import Wheel from '../Wheel';
 
 import getRowDataFromAnswer from '../../lib/getRowDataFromAnswer';
 
@@ -34,8 +34,13 @@ export default class Game extends React.Component {
     showWrongSolutionModal: false,
   }
 
+  // create answers the way you'd like to see them on the board
   answers = [
-    'douche bagged lunch dude',
+    [
+      'd-bagged',
+      'lunch',
+      'lady',
+    ],
   ];
 
   numColumns = 16;
@@ -55,7 +60,7 @@ export default class Game extends React.Component {
     const answer = getAnswer(this.answers);
 
     this.state.answer = answer;
-    this.state.rowData = getRowDataFromAnswer(answer, this.numColumns, this.numColumnsAsBoardGutter);
+    this.state.rowData = getRowDataFromAnswer(answer);
   }
 
   handleGuess = (guess, cost = 0) => {

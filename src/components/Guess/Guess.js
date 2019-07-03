@@ -22,12 +22,13 @@ export default class Guess extends React.Component {
   constructor(props) {
     super(props);
 
-    const letters = [...'abcdefghijklmnopqrstuvwxyz'];
+    // yes, characters other than letters _can_ show up in answers!
+    const characters = [...'abcdefghijklmnopqrstuvwxyz'];
 
     this.vowels = [...'aeiou'];
-    this.letterRows = [
-      letters.slice(0, 13),
-      letters.slice(13),
+    this.characterRows = [
+      characters.slice(0, 13),
+      characters.slice(13),
     ];
   }
 
@@ -116,7 +117,7 @@ export default class Guess extends React.Component {
           verticalAlign="middle"
           padded={true}
         >
-          {this.letterRows.map(this.renderRow)}
+          {this.characterRows.map(this.renderRow)}
         </Grid>
 
         <Container text>

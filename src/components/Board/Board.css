@@ -1,7 +1,19 @@
 .Board {
-  margin-top: 30px;
+  margin-top: 50px;
   padding: 0 15px;
-  border: 2px solid black;
+}
+
+.Board .ui.grid > .row.inner {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.Board .ui.grid > .row.outer-bottom {
+  padding-top: 0;
+}
+
+.Board .ui.grid > .row.outer-top {
+  padding-bottom: 0;
 }
 
 .Board .Board-cell {
