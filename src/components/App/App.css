@@ -1,5 +1,9 @@
 .App {}
 
+.App .ui.horizontal.statistic > .label {
+  margin: 0 0.75em 0 0.75em;
+}
+
 .App-logo {
   margin-right: 1.5em;
   animation: App-logo-spin infinite 20s linear;

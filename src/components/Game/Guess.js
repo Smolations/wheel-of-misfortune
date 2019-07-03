@@ -3,11 +3,10 @@ import React from 'react';
 
 import {
   Button,
-  Card,
   Container,
   Form,
   Grid,
-  Input,
+  Input, Modal
 } from 'semantic-ui-react';
 
 import './Guess.css';
@@ -16,7 +15,7 @@ import './Guess.css';
 export default class Guess extends React.Component {
   state = {
     guesses: [],
-    puzzleSolution: null,
+    puzzleSolution: '',
   };
 
 
@@ -25,15 +24,24 @@ export default class Guess extends React.Component {
 
     const letters = [...'abcdefghijklmnopqrstuvwxyz'];
 
+    this.vowels = [...'aeiou'];
     this.letterRows = [
       letters.slice(0, 13),
       letters.slice(13),
     ];
   }
 
+
   handleGuess = (guess) => {
-    this.setState({ guesses: this.state.guesses.concat([guess])});
-    this.props.onGuess(guess);
+    const isVowel = this.vowels.includes(guess);
+
+    if (isVowel) {
+      this.props.onVowel(guess);
+    } else {
+      this.props.onConsonant(guess);
+    }
+
+    this.setState({ guesses: this.state.guesses.concat([guess]) });
   }
 
   handleSolutionChange = (evt) => {
@@ -42,23 +50,49 @@ export default class Guess extends React.Component {
 
   handleSolve = (evt) => {
     this.props.onSolve(this.state.puzzleSolution);
+    this.setState({ puzzleSolution: '' });
     evt.preventDefault();
   }
+
 
   renderRow = (row) => {
     const { guesses } = this.state;
     const { disabled } = this.props;
-
+    const vowels = [...'aeiou'];
     const rowKey = row.reduce((accum, cell) => `${accum}${cell}`, '');
+
     const cells = row.map((cell, ndx) => {
+      const isDisabled = guesses.includes(cell) || disabled;
+      const buyVowelModalActions = [
+        { key: 'nay', negative: true, content: 'Nope, nevermind', name: 'notBuying' },
+        { key: 'yay', positive: true, content: `Buy for $${this.props.vowelCost}`, name: 'buyVowel' },
+      ];
+
+      const cellElement = vowels.includes(cell)
+        ? (
+            <Modal
+              trigger={<Button disabled={isDisabled}>{cell}</Button>}
+              size="tiny"
+              header="Time to pay up!"
+              vowel={cell}
+              content={(
+                <Modal.Content>
+                  <p>Would you like to buy the vowel <strong>{cell.toUpperCase()}</strong>?</p>
+                </Modal.Content>
+              )}
+              actions={buyVowelModalActions}
+              onActionClick={(evt, data) => evt.target.name === 'buyVowel' && this.handleGuess(data.vowel)}
+            />
+          )
+        : (
+            <Button disabled={isDisabled} onClick={() => this.handleGuess(cell)}>
+              {cell}
+            </Button>
+          );
+
       return (
         <Grid.Column key={ndx}>
-          <Button
-            disabled={guesses.includes(cell) || disabled}
-            onClick={() => this.handleGuess(cell)}
-          >
-            {cell}
-          </Button>
+          {cellElement}
         </Grid.Column>
       );
     });
@@ -71,7 +105,7 @@ export default class Guess extends React.Component {
   }
 
   render() {
-    // 26 letters; will distribute evenly over two rows
+    // 26 letters will distribute evenly over two rows
     const columns = 13;
 
     return (
@@ -87,11 +121,12 @@ export default class Guess extends React.Component {
 
         <Container text>
           <Form onSubmit={this.handleSolve}>
-            <Form.Field>
+            <Form.Field disabled={this.props.disabled}>
               <label>Would you like to solve the puzzle?</label>
               <Input
                 name="puzzleSolution"
                 placeholder="Take a guess..."
+                value={this.state.puzzleSolution}
                 onChange={this.handleSolutionChange}
                 action={<Button positive type="submit">Solve</Button>}
               />
@@ -106,11 +141,15 @@ export default class Guess extends React.Component {
 
 Guess.propTypes = {
   disabled: PropTypes.bool,
-  onGuess: PropTypes.func,
+  onConsonant: PropTypes.func,
+  onVowel: PropTypes.func,
   onSolve: PropTypes.func,
+  vowelCost: PropTypes.number,
 };
 
 Guess.defaultProps = {
-  onGuess: () => {},
+  onConsonant: () => {},
+  onVowel: () => {},
   onSolve: () => {},
+  vowelCost: 0,
 };

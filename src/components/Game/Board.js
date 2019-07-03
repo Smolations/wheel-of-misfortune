@@ -1,11 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import {
-  Card,
-  Container,
-  Grid,
-} from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 
 import './Board.css';
 

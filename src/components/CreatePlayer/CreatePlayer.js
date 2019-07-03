@@ -3,7 +3,6 @@ import React from 'react';
 // import { Link, Route } from 'react-router-dom';
 import {
   Button,
-  Checkbox,
   Container,
   Form,
   Header,

@@ -4,16 +4,10 @@ import React from 'react';
 import {
   Button,
   Card,
-  Container,
   Grid,
 } from 'semantic-ui-react';
 
 import './Wheel.css';
-
-
-const prizes = [
-  0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
-];
 
 
 export default class Wheel extends React.Component {
@@ -23,11 +17,12 @@ export default class Wheel extends React.Component {
   }
 
   spinWheel = () => {
+    const { onSpinEnd, onSpinStart, prizes } = this.props;
     const maxSelections = 20;
     let selectionCount = 0;
 
     this.setState({ isSpinning: true });
-    this.props.onSpinStart();
+    onSpinStart();
 
     const intervalId = setInterval(() => {
       const randomPrizeIndex = Math.floor(Math.random() * Math.floor(prizes.length));
@@ -42,10 +37,10 @@ export default class Wheel extends React.Component {
 
       if (selectionCount >= maxSelections) {
         clearInterval(intervalId);
+        onSpinEnd(prize);
         this.setState({ isSpinning: false });
-        this.props.onSpinEnd(prize);
       }
-    }, 200);
+    }, 100);
   }
 
   render() {
@@ -85,6 +80,7 @@ export default class Wheel extends React.Component {
 Wheel.propTypes = {
   onSpinEnd: PropTypes.func,
   onSpinStart: PropTypes.func,
+  prizes: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 Wheel.defaultProps = {

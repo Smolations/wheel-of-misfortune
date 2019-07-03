@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link, Route, withRouter } from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
 import {
   Container,
   Image,
   Menu,
+  Statistic,
 } from 'semantic-ui-react';
 
 import CreatePlayer from '../CreatePlayer';
@@ -21,17 +22,33 @@ class App extends React.Component {
       firstName: 'John',
       lastName: 'Doe',
     },
+    playerCreated: true, // spoofed during development
+    score: 0,
   }
 
 
   handlePlayerCreate = (player) => {
-    console.log('Player created! %o', player);
-    this.setState({ player });
+    this.setState({ player, playerCreated: true });
     this.props.history.replace('/play');
   };
 
+  handleScore = (score) => {
+    this.setState({ score });
+  }
 
-  render() {console.log('[App.render]')
+
+  render() {
+    const { player, playerCreated, score } = this.state;
+
+    const scoreMenuItem = (
+      <Menu.Item position="right">
+        <Statistic horizontal inverted size="mini">
+          <Statistic.Label>{player.firstName}&apos;s Score</Statistic.Label>
+          <Statistic.Value>{`$${score}`}</Statistic.Value>
+        </Statistic>
+      </Menu.Item>
+    );
+
     return (
       <div className="App">
         <Menu attached="top" inverted>
@@ -40,13 +57,13 @@ class App extends React.Component {
               <Image size="tiny" src={logo} className="App-logo" />
               Wheel of Misfortune!
             </Menu.Item>
-            <Menu.Item as="a">Start Over</Menu.Item>
+            {playerCreated && scoreMenuItem}
           </Container>
         </Menu>
 
         <Route path="/" exact component={Splash} />
-        <Route path="/create-player" component={() => <CreatePlayer onSubmit={this.handlePlayerCreate} />} />
-        <Route path="/play" component={() => <Game player={this.state.player} />} />
+        <Route path="/create-player" render={() => <CreatePlayer onSubmit={this.handlePlayerCreate} />} />
+        <Route path="/play" render={() => <Game onScore={this.handleScore} player={player} />} />
       </div>
     );
   }

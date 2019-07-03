@@ -1,0 +1,26 @@
+.GameSummary h1.ui.header,
+.GameSummary h2.ui.header,
+.GameSummary h3 {
+  text-align: center;
+}
+
+.GameSummary h1.ui.header {
+  font-size: 4em;
+  font-weight: normal;
+  margin-bottom: 0;
+  margin-top: 3em;
+}
+
+.GameSummary h2.ui.header {
+  font-size: 2.1em;
+  font-weight: normal;
+  margin-top: 1.5em;
+}
+
+.GameSummary h3 {
+  margin-top: 50px;
+}
+
+.GameSummary h3 + .container {
+  margin-top: 80px;
+}

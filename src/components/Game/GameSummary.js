@@ -6,6 +6,7 @@ import {
   Container,
   Header,
   Icon,
+  Label,
 } from 'semantic-ui-react';
 
 import './GameSummary.css';
@@ -16,30 +17,23 @@ export default class GameSummary extends React.Component {
     const { player, score } = this.props;
 
     return (
-      <Container text>
+      <Container className="GameSummary">
         <Header
           as="h1"
           content={`Congratulations ${player.firstName}, you won!`}
-          style={{
-            fontSize: '4em',
-            fontWeight: 'normal',
-            marginBottom: 0,
-            marginTop: '3em',
-          }}
         />
-        <Header
-          as="h2"
-          content={`You won $${score}`}
-          style={{
-            fontSize: '1.7em',
-            fontWeight: 'normal',
-            marginTop: '1.5em',
-          }}
-        />
-        <Button primary size="huge">
-          Play again
-          <Icon name="right arrow" />
-        </Button>
+        <Header as="h2">
+          <Label circular size="massive" color="green">${score}</Label>
+        </Header>
+
+        <h3>&ldquo;{this.props.answer.toUpperCase()}&rdquo;</h3>
+
+        <Container textAlign="center">
+          <Button primary size="huge">
+            Play again
+            <Icon name="right arrow" />
+          </Button>
+        </Container>
       </Container>
     );
   }
@@ -47,6 +41,7 @@ export default class GameSummary extends React.Component {
 
 
 GameSummary.propTypes = {
+  answer: PropTypes.string,
   player: PropTypes.object,
   score: PropTypes.number,
 };
