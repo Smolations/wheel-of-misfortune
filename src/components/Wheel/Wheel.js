@@ -22,13 +22,16 @@ export default class Wheel extends React.Component {
     let selectionCount = 0;
 
     this.setState({ isSpinning: true });
+
     onSpinStart();
 
     const intervalId = setInterval(() => {
       const randomPrizeIndex = Math.floor(Math.random() * Math.floor(prizes.length));
       const prize = prizes[randomPrizeIndex];
-      const prizeString = (prize === 0) ? 'Bankrupt' : `$${prize}`
+      const prizeString = (prize === 0) ? 'Bankrupt' : `$${prize}`; // update for free play/lose turn
 
+      // setting state using a function to ensure the rendering of
+      // each prize for each interval
       this.setState((state, props) => {
         return { ...state, prize: prizeString };
       });

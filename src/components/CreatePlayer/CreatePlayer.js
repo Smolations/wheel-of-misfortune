@@ -80,3 +80,7 @@ export default class CreatePlayer extends React.Component {
 CreatePlayer.propTypes = {
   onSubmit: PropTypes.func,
 };
+
+CreatePlayer.defaultProps = {
+  onSubmit: () => {},
+};

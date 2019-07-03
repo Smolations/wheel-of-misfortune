@@ -15,12 +15,6 @@ import Wheel from '../Wheel';
 import getRowDataFromAnswer from '../../lib/getRowDataFromAnswer';
 
 
-function getAnswer(answers) {
-  const randomAnswerIndex = Math.floor(Math.random() * Math.floor(answers.length));
-  return answers[randomAnswerIndex];
-}
-
-
 export default class Game extends React.Component {
   state = {
     answer: '',
@@ -53,12 +47,16 @@ export default class Game extends React.Component {
 
   ephemeralAnswers = [];
 
+  // 1000 - free play
+  // -500 - lose a turn
   prizes = [
-    0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
+    500, 900, 700, 300, 800, 550,
+    400, 500, 600, 350, 500, 900,
+    0, 650, 1000, 700, -500, 800,
+    500, 450, 500, 300, 0, 5000,
   ];
 
   vowelCost = 250;
-
 
 
   componentDidMount() {
@@ -68,6 +66,10 @@ export default class Game extends React.Component {
 
   getAnswerAsString = () => this.state.answer.map(line => line.trim()).join(' ')
 
+
+  handleConsonantGuess = (guess) => {
+    this.handleGuess(guess);
+  }
 
   handleGuess = (guess, cost = 0) => {
     const { prize, rowData, score } = this.state;
@@ -128,10 +130,6 @@ export default class Game extends React.Component {
 
   handleSpinStart = () => {
     this.setState({ lettersDisabled: true, solveDisabled: true });
-  }
-
-  handleConsonantGuess = (guess) => {
-    this.handleGuess(guess);
   }
 
   handleVowelGuess = (guess) => {

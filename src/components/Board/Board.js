@@ -19,6 +19,8 @@ export default class Board extends React.Component {
       cell.empty && classes.push('empty');
       cell.visible && classes.push('visible');
 
+      // if a cell is _actually_ empty, the grid gets messed up, so we
+      // pass a random character that will be made invisible by styles
       return (
         <Grid.Column
           className={classes.join(' ')}
@@ -31,12 +33,16 @@ export default class Board extends React.Component {
       );
     });
 
+    // needed to override grid styles so the board looks more
+    // like the real WoF board
     if (rowIndex === 0) {
       className = 'outer-top';
     } else if (rowIndex === 3) {
       className = 'outer-bottom';
     }
 
+    // the middle two rows are 14 cells wide. we can set this for all 4
+    // rows as the top/bottom rows will end up centered.
     return (
       <Grid.Row className={className} centered columns={14} key={rowKey}>
         {cells}
