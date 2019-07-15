@@ -1,4 +1,26 @@
+Welcome to Wheel of Misfortune!
+
+The project name may be a bit of a misnomer. If it has brought any feelings of anxiety, you can rest easy. Its origin comes from the fact that this app is [unfortunately] broken! It will be your job to fix it.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+
+## Assessing Skills
+
+As a programmer, you are no doubt aware of all the varying skills assessments companies use during the interview process. To prepare for these assessments, there are myriad websites that offer various, one-off coding challenges. However, I believe these assessments are often fundamentally flawed. The biggest of these flaws is that the vast majority of candidates are applying for positions where an established code base already exists. You most likely don't need to solve a linked list problem, an array sorting problem, or any other, isolated programming task.
+
+Enter the Wheel of Misfortune! You will be working on an app with existing code, standards, and practices. You will utilize skills that are _actually_ applicable to your day-to-day work. Some of these skills are:
+
+- debugging errors
+- architecture issues
+- test writing/debugging
+- fixing linting issues
+- adding new features
+
+I know firsthand how nerve-wracking these kinds of assessments are, so this project was created to make candidates feel more comfortable during the process and to focus on the skills you will need from day 1.
+
+To get started, view the task list [here](). You may begin immediately. Good luck!
+
 
 ## Available Scripts
 
@@ -17,52 +39,9 @@ You will also see any lint errors in the console.
 Launches the test runner in the interactive watch mode.<br>
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify

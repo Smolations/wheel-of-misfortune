@@ -2,6 +2,9 @@
   "name": "wheel-of-misfortune",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=10.15.1"
+  },
   "dependencies": {
     "prop-types": "15.7.2",
     "react": "16.8.6",
